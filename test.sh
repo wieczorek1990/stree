@@ -22,6 +22,7 @@ mkdir test/dir/.hidden_dir/
 
 make build
 
+run --version
 run --help
 run test/
 run -a test/

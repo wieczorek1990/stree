@@ -1,5 +1,11 @@
 import Foundation
 
+extension String {
+    public func bold() -> String{
+        "\u{001B}[1;30m\(self)\u{001B}[0;30m"
+    }
+}
+
 extension URL {
     var isDirectory: Bool {
        (try? resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
@@ -8,6 +14,7 @@ extension URL {
 
 @main
 public struct stree {
+    let VERSION = "1.1.0"
     var nesting: String = "    "
     var hiddenPrefix: Character = "."
 
@@ -15,15 +22,20 @@ public struct stree {
     private var maximumLevel: Int?
     private var path: String?
 
+    public func printVersion() {
+        print("stree@\(VERSION)")
+    }
+
     public func printHelp() {
         print("""
             stree -- directory tree viewing program.
             Usage:
-                stree [--help|-a|-L] path
+                stree [--version|--help|-a|-L] path
             Arguments:
-                --help print help
-                -a include hidden files
-                -L limit maximum level of directory tree depth
+                --version print version,
+                --help print help,
+                -a include hidden files,
+                -L limit maximum level of directory tree depth.
             Examples:
                 stree .
                 stree -a .
@@ -46,6 +58,9 @@ public struct stree {
             }
 
             switch argument {
+                case "--version":
+                    self.printVersion()
+                    exit(0)
                 case "--help":
                     self.printHelp()
                     exit(0)
@@ -83,7 +98,7 @@ public struct stree {
     }
 
     public func printPathStart(_ path: String) throws {
-        let boldPath = self.bold(path)
+        let boldPath = path.bold()
         print(boldPath)
         try self.printPath(path, 0)
     }
@@ -99,10 +114,6 @@ public struct stree {
 
     public func hidden(_ item: String) -> Bool {
         item[item.index(item.startIndex, offsetBy: 0)] == self.hiddenPrefix
-    }
-
-    public func bold(_ item: String) -> String{
-        "\u{001B}[1;30m\(item)\u{001B}[0;30m"
     }
 
     public func printPath(_ path: String, _ level: Int) throws {
@@ -123,7 +134,7 @@ public struct stree {
             let itemPrefix = String(repeating: self.nesting, count: nextLevel)
 
             if url.isDirectory {
-                let boldItem = self.bold(item)
+                let boldItem = item.bold()
                 print("\(itemPrefix) \(boldItem)")
 
                 if !self.canTraverse(nextLevel) {
