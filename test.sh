@@ -32,6 +32,9 @@ run -L 2 test/
 run -a -L 0 test/
 run -a -L 1 test/
 run -a -L 2 test/
+run -s test/
+run -s -L 0 test/
+run --help -s test/
 
 make clean
 rm -r test/

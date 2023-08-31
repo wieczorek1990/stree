@@ -21,6 +21,8 @@ public struct stree {
     private var showAll: Bool = false
     private var maximumLevel: Int?
     private var path: String?
+    private var summary: Bool = false
+    private var maximumLevelReached: Int?
 
     public func printVersion() {
         print("stree@\(VERSION)")
@@ -30,18 +32,31 @@ public struct stree {
         print("""
             stree -- directory tree viewing program.
             Usage:
-                stree [--version|--help|-a|-L] path
+                stree [--version|--help|-a|-L|-s] path
             Arguments:
                 --version print version,
                 --help print help,
                 -a include hidden files,
                 -L limit maximum level of directory tree depth.
+                -s print summary
             Examples:
                 stree .
                 stree -a .
                 stree -L 1 .
+                stree -s .
             """
         )
+    }
+
+    public func printSummary() {
+        if !self.summary {
+            return
+        }
+        if self.maximumLevelReached != nil {
+            print("Maximum level reached: \(self.maximumLevelReached!).")
+        } else {
+            print("Was not traversing.")
+        }
     }
 
     public init(_ arguments: Array<String>) {
@@ -86,6 +101,8 @@ public struct stree {
                     }
 
                     self.maximumLevel = maximumLevel
+                case "-s":
+                    self.summary = true
                 default:
                     if pathFound {
                         break
@@ -97,7 +114,8 @@ public struct stree {
         }
     }
 
-    public func printPathStart(_ path: String) throws {
+    public mutating func printPathStart(_ path: String) throws {
+        self.maximumLevelReached = 0
         let boldPath = path.bold()
         print(boldPath)
         try self.printPath(path, 0)
@@ -116,11 +134,12 @@ public struct stree {
         item[item.index(item.startIndex, offsetBy: 0)] == self.hiddenPrefix
     }
 
-    public func printPath(_ path: String, _ level: Int) throws {
+    public mutating func printPath(_ path: String, _ level: Int) throws {
         if !self.canTraverse(level) {
             return
         }
 
+        self.maximumLevelReached = level
         let nextLevel = level + 1
         let items = try FileManager.default.contentsOfDirectory(atPath: path)
 
@@ -148,9 +167,10 @@ public struct stree {
     }
 
     public static func main() throws {
-        let application = stree(CommandLine.arguments)
+        var application = stree(CommandLine.arguments)
         if let path = application.path { 
             try application.printPathStart(path)
+            application.printSummary()
         } else {
             application.printHelp()
         }
