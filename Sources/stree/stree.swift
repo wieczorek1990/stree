@@ -52,8 +52,8 @@ public struct stree {
         if !self.summary {
             return
         }
-        if self.maximumLevelReached != nil {
-            print("Maximum level reached: \(self.maximumLevelReached!).")
+        if let maximumLevelReached = self.maximumLevelReached {
+            print("Maximum level reached: \(maximumLevelReached).")
         } else {
             print("Was not traversing.")
         }
@@ -116,6 +116,7 @@ public struct stree {
 
     public mutating func printPathStart(_ path: String) throws {
         self.maximumLevelReached = 0
+
         let boldPath = path.bold()
         print(boldPath)
         try self.printPath(path, 0)
@@ -140,6 +141,7 @@ public struct stree {
         }
 
         self.maximumLevelReached = level
+
         let nextLevel = level + 1
         let items = try FileManager.default.contentsOfDirectory(atPath: path)
 
