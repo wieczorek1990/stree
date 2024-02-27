@@ -89,8 +89,17 @@ public struct Stree {
         continue
       }
 
-      let enumerated_argument = Argument(rawValue: argument)
-      switch enumerated_argument {
+      guard let enumeratedArgument = Argument(rawValue: argument) else {
+        if pathFound {
+          break
+        }
+        pathFound = true
+
+        self.path = argument
+        return
+      }
+
+      switch enumeratedArgument {
       case .version:
         self.printVersion()
         exit(0)
@@ -117,13 +126,6 @@ public struct Stree {
         self.maximumLevel = maximumLevel
       case .summary:
         self.summary = true
-      default:
-        if pathFound {
-          break
-        }
-        pathFound = true
-
-        self.path = argument
       }
     }
   }
