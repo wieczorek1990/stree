@@ -1,5 +1,11 @@
 import Foundation
 
+extension Array {
+  subscript(safe index: Index) -> Element? {
+    0 <= index && index < count ? self[index] : nil
+  }
+}
+
 extension String {
   public func bold() -> String {
     "\u{001B}[1;30m\(self)\u{001B}[0;30m"
@@ -100,14 +106,10 @@ public struct Stree {
           break
         }
 
-        let nextIndex = index + 1
-        if nextIndex >= arguments.count {
+        guard let maximumLevelString = arguments[safe: index + 1] else {
           break
         }
-
-        let maximumLevelString = arguments[nextIndex]
         let maximumLevel = Int(maximumLevelString)!
-
         if maximumLevel < 0 {
           break
         }
