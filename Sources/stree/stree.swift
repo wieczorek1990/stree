@@ -13,18 +13,20 @@ extension URL {
 }
 
 @main
-public struct stree {
-  let VERSION = "1.2.0"
-  var nesting: String = "    "
-  var hiddenPrefix: Character = "."
+public struct Stree {
+  private let VERSION: String = "1.2.0"
+
+  public var nesting: String = "    "
 
   private var showAll: Bool = false
   private var maximumLevel: Int?
-  private var path: String?
   private var summary: Bool = false
+  private var path: String?
+
+  private var hiddenPrefix: Character = "."
   private var maximumLevelReached: Int?
 
-  public enum Argument: String {
+  private enum Argument: String {
     case version = "--version"
     case help = "--help"
     case all = "-a"
@@ -32,11 +34,11 @@ public struct stree {
     case summary = "-s"
   }
 
-  public func printVersion() {
+  private func printVersion() {
     print("stree@\(VERSION)")
   }
 
-  public func printHelp() {
+  private func printHelp() {
     print(
       """
       stree -- directory tree viewing program.
@@ -57,7 +59,7 @@ public struct stree {
     )
   }
 
-  public func printSummary() {
+  private func printSummary() {
     if !self.summary {
       return
     }
@@ -124,7 +126,7 @@ public struct stree {
     }
   }
 
-  public mutating func printPathStart(_ path: String) throws {
+  private mutating func printPathStart(_ path: String) throws {
     self.maximumLevelReached = 0
 
     let boldPath = path.bold()
@@ -132,7 +134,7 @@ public struct stree {
     try self.printPath(path, 0)
   }
 
-  public func canTraverse(_ nextLevel: Int) -> Bool {
+  private func canTraverse(_ nextLevel: Int) -> Bool {
     if let maximumLevel = self.maximumLevel {
       if nextLevel >= maximumLevel {
         return false
@@ -141,11 +143,11 @@ public struct stree {
     return true
   }
 
-  public func hidden(_ item: String) -> Bool {
+  private func hidden(_ item: String) -> Bool {
     item[item.index(item.startIndex, offsetBy: 0)] == self.hiddenPrefix
   }
 
-  public mutating func printPath(_ path: String, _ level: Int) throws {
+  private mutating func printPath(_ path: String, _ level: Int) throws {
     if !self.canTraverse(level) {
       return
     }
@@ -179,7 +181,7 @@ public struct stree {
   }
 
   public static func main() throws {
-    var application = stree(CommandLine.arguments)
+    var application = Stree(CommandLine.arguments)
     if let path = application.path {
       try application.printPathStart(path)
       application.printSummary()
