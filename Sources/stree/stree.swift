@@ -8,7 +8,7 @@ extension Array {
 
 extension String {
   public func bold() -> String {
-    "\u{001B}[1;30m\(self)\u{001B}[0;30m"
+    "\u{001B}[1m\(self)\u{001B}[0m"
   }
 }
 
