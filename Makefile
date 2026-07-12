@@ -11,4 +11,4 @@ clean:
 	rm -r .build/
 
 install: build
-	sudo cp .build/release/stree /usr/local/bin/
+	sudo cp .build/release/stree ~/.local/bin/
