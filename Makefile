@@ -11,4 +11,5 @@ clean:
 	rm -r .build/
 
 install: build
+	mkdir -p ~/.local/bin/
 	cp .build/release/stree ~/.local/bin/
